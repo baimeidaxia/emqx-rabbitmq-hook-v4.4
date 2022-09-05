@@ -14,7 +14,7 @@
 %% limitations under the License.
 %%--------------------------------------------------------------------
 
--module(emqx_plugin_template).
+-module(emqx_rabbitmq_hook).
 
 -include("emqx.hrl").
 

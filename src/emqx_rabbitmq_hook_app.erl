@@ -26,9 +26,9 @@
 
 start(_StartType, _StartArgs) ->
     {ok, Sup} = emqx_rabbitmq_hook_sup:start_link(),
-    emqx_rabbitmq_hook_sup:load(application:get_all_env()),
+    emqx_rabbitmq_hook:load(application:get_all_env()),
     {ok, Sup}.
 
 stop(_State) ->
-    emqx_plugin_template:unload().
+    emqx_rabbitmq_hook:unload().
 

@@ -4,7 +4,7 @@
   {modules, []},
   {registered, [emqx_rabbitmq_hook_sup]},
   {applications, [kernel,stdlib,amqp_client,jiffy,ecpool]},
-  {mod, {emqx_plugin_template_app,[]}},
+  {mod, {emqx_rabbitmq_hook_app,[]}},
   {env, []},
   {licenses, ["Apache-2.0"]},
   {maintainers, ["EMQ X Team <contact@emqx.io>"]},
