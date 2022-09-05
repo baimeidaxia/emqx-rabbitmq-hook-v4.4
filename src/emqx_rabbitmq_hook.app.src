@@ -1,0 +1,14 @@
+{application, emqx_rabbitmq_hook,
+ [{description, "EMQ X Plugin RabbitMQ Template"},
+  {vsn, "git"},
+  {modules, []},
+  {registered, [emqx_rabbitmq_hook_sup]},
+  {applications, [kernel,stdlib,amqp_client,jiffy,ecpool]},
+  {mod, {emqx_plugin_template_app,[]}},
+  {env, []},
+  {licenses, ["Apache-2.0"]},
+  {maintainers, ["EMQ X Team <contact@emqx.io>"]},
+  {links, [{"Homepage", "https://emqx.io/"},
+           {"Github", "https://github.com/emqx/emqx-plugin-template"}
+          ]}
+ ]}.
