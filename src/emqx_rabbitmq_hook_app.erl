@@ -25,6 +25,7 @@
         ]).
 
 start(_StartType, _StartArgs) ->
+    io:format("emqx_rabbitmq_hook app start~n"),
     {ok, Sup} = emqx_rabbitmq_hook_sup:start_link(),
     emqx_rabbitmq_hook:load(application:get_all_env()),
     {ok, Sup}.

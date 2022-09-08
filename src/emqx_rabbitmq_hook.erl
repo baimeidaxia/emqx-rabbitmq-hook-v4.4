@@ -212,15 +212,15 @@ on_message_acked(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
 
 connect(Opts) ->
     io:format("connent opts ~p~n", [Opts]),
-    {ok, Host} = application:get_env(?APP, host),
-    {ok, Port} = application:get_env(?APP, port),
-    {ok, Username} = application:get_env(?APP, username),
-    {ok, Password} = application:get_env(?APP, password),
+%%    {ok, Host} = application:get_env(?APP, host),
+%%    {ok, Port} = application:get_env(?APP, port),
+%%    {ok, Username} = application:get_env(?APP, username),
+%%    {ok, Password} = application:get_env(?APP, password),
     ConnOpts = #amqp_params_network{
-					host = Host,
-				    port = Port,
-				    username = list_to_binary(Username),
-				    password = list_to_binary(Password)
+					host = "192.168.0.209",
+				    port = 5672,
+				    username = list_to_binary("admin"),
+				    password = list_to_binary("admin")
 				},
     {ok, C} = amqp_connection:start(ConnOpts),
     io:format("amqp connection started~n"),
@@ -234,8 +234,8 @@ publish_message(Topic, Event, Payload, Connection) ->
 	RoutingKey = list_to_binary(string:replace(Topic, "/", ".", all)),
 	io:format("convert topic/~s to routingKey/~s with event/~s ~n", [Topic, RoutingKey, Event]),
     {ok, Channel} = amqp_connection:open_channel(Connection),
-    {ok, Exchange} = application:get_env(?APP, exchange),
-    Publish = #'basic.publish'{exchange = list_to_binary(Exchange), routing_key = RoutingKey},
+%%    {ok, Exchange} = application:get_env(?APP, exchange),
+    Publish = #'basic.publish'{exchange = list_to_binary("t.emqx"), routing_key = RoutingKey},
     amqp_channel:cast(Channel, Publish, #amqp_msg{
 			payload = jsx:encode(Payload), 
 			props = #'P_basic'{
