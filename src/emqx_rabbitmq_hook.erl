@@ -20,6 +20,8 @@
 
 -include("emqx_rabbitmq_hook.hrl").
 
+-include_lib("amqp_client/include/amqp_client.hrl").
+
 -behaviour(ecpool_worker).
 
 -export([ connect/1
@@ -95,7 +97,7 @@ on_client_connected(ClientInfo = #{clientid := ClientId}, ConnInfo, _Env) ->
     io:format("Client(~s) connected, ClientInfo:~n~p~n, ConnInfo:~n~p~n", [ClientId, ClientInfo, ConnInfo]),
     publish_message("client.connected", "client.connected", #{
 			clientInfo => ClientInfo#{peerhost := ip_to_binary(maps:get(peerhost, ClientInfo))},
-			connInfo => ConnInfo#{peername := ip_port_to_binary(maps:get(peername, ConnInfo)), 
+			connInfo => ConnInfo#{peername := ip_port_to_binary(maps:get(peername, ConnInfo)),
 			sockname := ip_port_to_binary(maps:get(sockname, ConnInfo))}
 		}
 	).
@@ -135,12 +137,12 @@ on_session_created(#{clientid := ClientId}, SessInfo, _Env) ->
     io:format("Session(~s) created, Session Info:~n~p~n", [ClientId, SessInfo]).
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
-    io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]),
-    publish_message(Topic, "session.subscribed", #{
-			clientInfo => ClientInfo#{peerhost := ip_to_binary(maps:get(peerhost, ClientInfo))},
-		    topic => Topic, opts => SubOpts
-		}
-	).
+    io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
+%%    publish_message(Topic, "session.subscribed", #{
+%%			clientInfo => ClientInfo#{peerhost := ip_to_binary(maps:get(peerhost, ClientInfo))},
+%%		    topic => Topic, opts => SubOpts
+%%		}
+%%	).
 
 on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
     io:format("Session(~s) unsubscribed ~s with opts: ~p~n", [ClientId, Topic, Opts]).
@@ -212,15 +214,16 @@ on_message_acked(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
 
 connect(Opts) ->
     io:format("connent opts ~p~n", [Opts]),
-%%    {ok, Host} = application:get_env(?APP, host),
-%%    {ok, Port} = application:get_env(?APP, port),
-%%    {ok, Username} = application:get_env(?APP, username),
-%%    {ok, Password} = application:get_env(?APP, password),
+    {ok, Host} = application:get_env(?APP, host),
+    {ok, Port} = application:get_env(?APP, port),
+    {ok, Username} = application:get_env(?APP, username),
+    {ok, Password} = application:get_env(?APP, password),
     ConnOpts = #amqp_params_network{
-					host = "192.168.0.209",
-				    port = 5672,
-				    username = list_to_binary("admin"),
-				    password = list_to_binary("admin")
+					host = Host,
+				    port = Port,
+                    username = list_to_binary(Username),
+                    password = list_to_binary(Password),
+					virtual_host = <<"my_vhost">>
 				},
     {ok, C} = amqp_connection:start(ConnOpts),
     io:format("amqp connection started~n"),
@@ -234,10 +237,10 @@ publish_message(Topic, Event, Payload, Connection) ->
 	RoutingKey = list_to_binary(string:replace(Topic, "/", ".", all)),
 	io:format("convert topic/~s to routingKey/~s with event/~s ~n", [Topic, RoutingKey, Event]),
     {ok, Channel} = amqp_connection:open_channel(Connection),
-%%    {ok, Exchange} = application:get_env(?APP, exchange),
-    Publish = #'basic.publish'{exchange = list_to_binary("t.emqx"), routing_key = RoutingKey},
+    {ok, Exchange} = application:get_env(?APP, exchange),
+    Publish = #'basic.publish'{exchange = list_to_binary(Exchange), routing_key = RoutingKey},
     amqp_channel:cast(Channel, Publish, #amqp_msg{
-			payload = jsx:encode(Payload), 
+			payload = jsx:encode(Payload),
 			props = #'P_basic'{
 						content_type = <<"application/json">>,
 						content_encoding = <<"UTF-8">>,
@@ -251,7 +254,7 @@ ip_to_binary(IpTuple) -> list_to_binary(ip_to_string(IpTuple)).
 
 ip_to_string(IpTuple) -> string:join(lists:map(fun (X) -> integer_to_list(X) end, tuple_to_list(IpTuple)), ".").
 
-ip_port_to_binary(IpPortTuple) -> 
+ip_port_to_binary(IpPortTuple) ->
 	{IP_Tuple, Port} = IpPortTuple,
     IpStr = ip_to_string(IP_Tuple),
     PortStr = integer_to_list(Port),

@@ -1,0 +1,23 @@
+{mapping, "rabbitmq.pool_size", "emqx_rabbitmq_hook.pool_size", [
+  {datatype, integer}
+]}.
+
+{mapping, "rabbitmq.exchange", "emqx_rabbitmq_hook.exchange", [
+  {datatype, string}
+]}.
+
+{mapping, "rabbitmq.host", "emqx_rabbitmq_hook.host", [
+  {datatype, string}
+]}.
+
+{mapping, "rabbitmq.port", "emqx_rabbitmq_hook.port", [
+  {datatype, integer}
+]}.
+
+{mapping, "rabbitmq.username", "emqx_rabbitmq_hook.username", [
+  {datatype, string}
+]}.
+
+{mapping, "rabbitmq.password", "emqx_rabbitmq_hook.password", [
+  {datatype, string}
+]}.

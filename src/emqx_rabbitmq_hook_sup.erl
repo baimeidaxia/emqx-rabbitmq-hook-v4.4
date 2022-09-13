@@ -29,7 +29,9 @@ start_link() ->
 
 init([]) ->
     io:format("emqx_rabbitmq_hook sup init~n"),
+    io:format("get_all_env ~p~n", [application:get_all_env()]),
     {ok, PoolSize} = application:get_env(?APP, pool_size),
+    io:format("PoolSize ~p~n", [PoolSize]),
     PoolSpec = ecpool:pool_spec(?APP, ?APP, ?APP, [{pool_size, PoolSize}, {auto_reconnect, 1}]),
     {ok, {{one_for_all, 0, 1}, [PoolSpec]}}.
 
