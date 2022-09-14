@@ -20,8 +20,6 @@
 
 -include("emqx_rabbitmq_hook.hrl").
 
--include_lib("amqp_client/include/amqp_client.hrl").
-
 -behaviour(ecpool_worker).
 
 -export([ connect/1
