@@ -21,3 +21,7 @@
 {mapping, "rabbitmq.password", "emqx_rabbitmq_hook.password", [
   {datatype, string}
 ]}.
+
+{mapping, "rabbitmq.vhost", "emqx_rabbitmq_hook.vhost", [
+  {datatype, string}
+]}.

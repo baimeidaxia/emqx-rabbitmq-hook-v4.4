@@ -216,12 +216,13 @@ connect(Opts) ->
     {ok, Port} = application:get_env(?APP, port),
     {ok, Username} = application:get_env(?APP, username),
     {ok, Password} = application:get_env(?APP, password),
+    {ok, Vhost} = application:get_env(?APP, vhost),
     ConnOpts = #amqp_params_network{
 					host = Host,
 				    port = Port,
                     username = list_to_binary(Username),
                     password = list_to_binary(Password),
-					virtual_host = <<"my_vhost">>
+					virtual_host = list_to_binary(Vhost)
 				},
     {ok, C} = amqp_connection:start(ConnOpts),
     io:format("amqp connection started~n"),
